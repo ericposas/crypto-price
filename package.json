@@ -1,0 +1,29 @@
+{
+  "name": "crypto-api-test",
+  "version": "1.0.0",
+  "description": "a simple cryptocompare api ",
+  "main": "crypto-check.js",
+  "dependencies": {
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ericposas/crypto-price.git"
+  },
+  "keywords": [
+    "crypto",
+    "bitcoin",
+    "ethereum"
+  ],
+  "author": "crypto",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ericposas/crypto-price/issues"
+  },
+  "homepage": "https://github.com/ericposas/crypto-price#readme"
+}
