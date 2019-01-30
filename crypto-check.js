@@ -9,6 +9,8 @@ const cp = require('child_process');
 //console.log( symbs_to_string );
 //return;
 
+module.exports = function(){
+
 if(symbs == ''){
   symbs_to_string = 'ETH,BTC';
 }
@@ -56,3 +58,5 @@ function process_result(res){
   });
   wstream.write( data );  
 }
+
+};
