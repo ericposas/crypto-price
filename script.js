@@ -2,8 +2,9 @@ const rp = require('request-promise');
 let symbs = process.argv.slice(2,process.argv.length);
 let symbs_to_string = symbs.join(',');
 const fs = require('fs');
-const wstream = fs.createWriteStream('./data.txt', {flags:'w'});
 const EOL = require('os').EOL;
+const cp = require('child_process');
+
 
 //console.log( symbs_to_string );
 //return;
@@ -12,7 +13,7 @@ if(symbs == ''){
   symbs_to_string = 'ETH,BTC';
 }
 
-setTimeout( get_crypto_prices, 2000);
+setInterval( get_crypto_prices, 3000);
 
 
 function get_crypto_prices(){
@@ -28,7 +29,7 @@ function get_crypto_prices(){
   });
 }
 
-fs.watch('./data.txt', ()=>{
+fs.watchFile('./data.txt', ()=>{
   let chunks = [];
   const rstream = fs.createReadStream('./data.txt');
   rstream.on('data', chunk=>{
@@ -36,19 +37,20 @@ fs.watch('./data.txt', ()=>{
   });
   rstream.on('end', ()=>{
     console.log( Buffer.concat(chunks).toString() );
+    //process.stdout.write( Buffer.concat(chunks).toString() );
   });
 });
 
 
 function process_result(res){
+  const wstream = fs.createWriteStream('./data.txt', {flags:'w'});
   let data = '';
   Object.keys(res).forEach( key=>{
     //console.log( key);
-    data+=key;
-    data+=EOL;
+    //data+=key;
     Object.keys(res[key]).forEach( k=>{
       //console.log( res[key][k] );
-      data+=res[key][k];
+      data+=key+': '+res[key][k];
       data+=EOL;
     });
   });
