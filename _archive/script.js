@@ -1,31 +1,54 @@
 const rp = require('request-promise');
-const options = {
-  method: 'get',
-  //uri: 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest',
-  uri: 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/historical',
-  qs: {
-    start: 1,
-    limit: 5,
-    convert: 'USD'
-  },
-  headers: {
-    'X-CMC_PRO_API_KEY': '31c332f1-c7b3-482c-891c-29b59b1d53c9'
-  },
-  json: true,
-  gzip: true
+let symbs = process.argv.slice(2,process.argv.length);
+let symbs_to_string = symbs.join(',');
+const fs = require('fs');
+const EOL = require('os').EOL;
+const cp = require('child_process');
+
+
+module.exports = function crypto_check(){
+
+if(symbs == ''){
+  symbs_to_string = 'ETH,BTC';
 }
 
-rp(options).then(resp=>{
-  console.log('API call response:', resp);
-  process_data(resp);
-}).catch( err=>{
-  console.log('API call error:'
-, err.message);
+setInterval( get_crypto_prices, 3000);
+
+
+function get_crypto_prices(){
+  let req = rp({
+    method: 'get',
+    uri: `https://min-api.cryptocompare.com/data/pricemulti?fsyms=${symbs_to_string}&tsyms=USD&api_key=3f1949649f53975592a769d97da853b28ba6e6d63126d8817bcb1f0818303b61`,
+    json: true
+  }).then( res=>{
+    process_result(res);
+  }).catch( err=>{
+    console.log(err);
+  });
+}
+
+fs.watchFile('./data.txt', ()=>{
+  let chunks = [];
+  const rstream = fs.createReadStream('./data.txt');
+  rstream.on('data', chunk=>{
+    chunks.push(chunk);
+  });
+  rstream.on('end', ()=>{
+    console.log( Buffer.concat(chunks).toString() );
+  });
 });
 
 
-function process_data(response){
-  response.data.forEach( (item,i)=>{
-    console.log( item.name, item.quotes.quote.USD );
+function process_result(res){
+  const wstream = fs.createWriteStream('./data.txt', {flags:'w'});
+  let data = '';
+  Object.keys(res).forEach( key=>{
+    Object.keys(res[key]).forEach( k=>{
+      data+=key+': '+res[key][k];
+      data+=EOL;
+    });
   });
+  wstream.write( data );  
 }
+
+);

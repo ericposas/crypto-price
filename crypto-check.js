@@ -15,6 +15,7 @@ if(symbs == ''){
   symbs_to_string = 'ETH,BTC';
 }
 
+get_crypto_prices();
 setInterval( get_crypto_prices, 3000);
 
 
